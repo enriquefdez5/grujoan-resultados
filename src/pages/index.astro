@@ -2,19 +2,14 @@
 const clubs = [
   { name: "Grujoan", code: 175 },
   { name: "Centro Asturiano", code: 180 },
-  { name: "Covadonga", code: 190 },
-  { name: "La Carisa", code: 195 },
-  { name: "Oviedo", code: 200 },
-  { name: "Juventud Estadio", code: 150 },
-  { name: "Astur", code: 170 }
+  { name: "Covadonga", code: 190 }
 ];
+
+
 ---
 
-<h1>Buscar club</h1>
-
 <select id="clubSelect">
-  <option value="">Selecciona un club</option>
-
+  <option value="">Selecciona club</option>
   {clubs.map((club) => (
     <option value={club.code}>{club.name}</option>
   ))}
@@ -22,34 +17,152 @@ const clubs = [
 
 <button id="buscarBtn">Buscar</button>
 
-<pre id="resultado"></pre>
+<hr>
+
+<div id="ageTabs"></div>
+<div id="teams"></div>
+<div id="games"></div>
 
 <script>
-  const btn = document.getElementById("buscarBtn");
-  const select = document.getElementById("clubSelect");
-  const resultado = document.getElementById("resultado");
+	const ageOrder = [
+  "senior",
+  "juvenil",
+  "cadete",
+  "infantil",
+  "alevín"
+];
 
-  btn?.addEventListener("click", async () => {
-    const clubCode = select?.value;
+const competitionOrder = [
+  "Liga Nacional",
+  "1ª JUVENIL",
+  "2ª JUVENIL",
+  "3ª JUVENIL",
 
-    if (!clubCode) {
-      resultado.textContent = "Selecciona un club primero";
-      return;
+  "1ª CADETE",
+  "2ª CADETE",
+  "3ª CADETE",
+
+  "1ª INFANTIL",
+  "2ª INFANTIL",
+  "3ª INFANTIL",
+
+  "1ª ALEVIN",
+  "2ª ALEVIN",
+  "3ª ALEVIN"
+];
+
+const btn = document.getElementById("buscarBtn");
+const select = document.getElementById("clubSelect");
+
+const ageTabs = document.getElementById("ageTabs");
+const teamsContainer = document.getElementById("teams");
+const gamesContainer = document.getElementById("games");
+
+let grouped = {};
+
+btn?.addEventListener("click", async () => {
+
+  const clubCode = select?.value;
+
+  const res = await fetch(`https://apihq.azzulei.com/v1/games?status=finished&club_id=${clubCode}`);
+  const json = await res.json();
+
+  const games = json.data;
+
+  grouped = {};
+
+  games.forEach(game => {
+
+    const age = game.competition.age_category.name;
+    const teamId = game.team1.id;
+    const teamName = game.team1.name;
+    const competition = game.competition.name;
+
+    if (!grouped[age]) grouped[age] = {};
+    if (!grouped[age][teamId]) {
+      grouped[age][teamId] = {
+        name: teamName,
+        competition: competition,
+        games: []
+      };
     }
 
-    try {
-      // Cambia esta URL por tu API
-      const response = await fetch(`https://apihq.azzulei.com/v1/games?status=finished&club_id=${clubCode}`);
+    grouped[age][teamId].games.push(game);
 
-      if (!response.ok) {
-        throw new Error("Error en la petición");
-      }
-
-      const data = await response.json();
-
-      resultado.textContent = JSON.stringify(data, null, 2);
-    } catch (error) {
-      resultado.textContent = "Error: " + error.message;
-    }
   });
+
+  renderAgeTabs();
+});
+
+function renderAgeTabs(){
+
+  ageTabs.innerHTML = "";
+
+  const ages = Object.keys(grouped).sort(
+    (a,b) => ageOrder.indexOf(a) - ageOrder.indexOf(b)
+  );
+
+  ages.forEach((age, index) => {
+
+    const btn = document.createElement("button");
+    btn.textContent = age;
+
+    btn.onclick = () => renderTeams(age);
+
+    ageTabs?.appendChild(btn);
+
+    if(index === 0) renderTeams(age);
+
+  });
+
+}
+
+function renderTeams(age){
+
+  teamsContainer.innerHTML = "";
+  gamesContainer.innerHTML = "";
+
+  const teams = Object.values(grouped[age]);
+
+  teams.sort((a,b) => 
+    competitionOrder.indexOf(a?.competition) - 
+    competitionOrder.indexOf(b?.competition)
+  );
+
+  teams.forEach(team => {
+
+    const btn = document.createElement("button");
+
+    btn.textContent = `${team?.name} (${team?.competition})`;
+
+    btn.onclick = () => renderGames(team.games);
+
+    teamsContainer.appendChild(btn);
+
+  });
+
+}
+
+function renderGames(games){
+
+  gamesContainer.innerHTML = "";
+
+  games.forEach(game => {
+
+    const div = document.createElement("div");
+
+    const date = new Date(game.ts_game_start * 1000);
+
+    div.innerHTML = `
+      <strong>${game.name}</strong><br>
+      Fecha: ${date.toLocaleString()}<br>
+      ID partido: ${game.id}
+      <hr>
+    `;
+
+    gamesContainer?.appendChild(div);
+
+  });
+
+}
 </script>
