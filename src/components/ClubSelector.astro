@@ -1,0 +1,18 @@
+---
+const clubs = [
+  { name: "GRujoan", code: 175 },
+  { name: "Centro Asturiano", code: 180 },
+  { name: "Covadonga", code: 190 }
+];
+---
+
+<select id="clubSelect">
+  <option value="">Selecciona club</option>
+
+  {clubs.map(club => (
+    <option value={club.code}>{club.name}</option>
+  ))}
+
+</select>
+
+<button id="buscarBtn">Buscar</button>

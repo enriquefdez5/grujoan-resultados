@@ -1,168 +1,20 @@
 ---
-const clubs = [
-  { name: "Grujoan", code: 175 },
-  { name: "Centro Asturiano", code: 180 },
-  { name: "Covadonga", code: 190 }
-];
+import ClubSelector from "../components/ClubSelector.astro";
+import AgeTabs from "../components/AgeTabs.astro";
+import TeamsList from "../components/TeamsList.astro";
+import GamesList from "../components/GamesList.astro";
 
 
 ---
 
-<select id="clubSelect">
-  <option value="">Selecciona club</option>
-  {clubs.map((club) => (
-    <option value={club.code}>{club.name}</option>
-  ))}
-</select>
+<h1>Partidos del club</h1>
 
-<button id="buscarBtn">Buscar</button>
+<ClubSelector />
 
 <hr>
 
-<div id="ageTabs"></div>
-<div id="teams"></div>
-<div id="games"></div>
+<AgeTabs />
+<TeamsList />
+<GamesList />
 
-<script>
-	const ageOrder = [
-  "senior",
-  "juvenil",
-  "cadete",
-  "infantil",
-  "alevín"
-];
-
-const competitionOrder = [
-  "Liga Nacional",
-  "1ª JUVENIL",
-  "2ª JUVENIL",
-  "3ª JUVENIL",
-
-  "1ª CADETE",
-  "2ª CADETE",
-  "3ª CADETE",
-
-  "1ª INFANTIL",
-  "2ª INFANTIL",
-  "3ª INFANTIL",
-
-  "1ª ALEVIN",
-  "2ª ALEVIN",
-  "3ª ALEVIN"
-];
-
-const btn = document.getElementById("buscarBtn");
-const select = document.getElementById("clubSelect");
-
-const ageTabs = document.getElementById("ageTabs");
-const teamsContainer = document.getElementById("teams");
-const gamesContainer = document.getElementById("games");
-
-let grouped = {};
-
-btn?.addEventListener("click", async () => {
-
-  const clubCode = select?.value;
-
-  const res = await fetch(`https://apihq.azzulei.com/v1/games?status=finished&club_id=${clubCode}`);
-  const json = await res.json();
-
-  const games = json.data;
-
-  grouped = {};
-
-  games.forEach(game => {
-
-    const age = game.competition.age_category.name;
-    const teamId = game.team1.id;
-    const teamName = game.team1.name;
-    const competition = game.competition.name;
-
-    if (!grouped[age]) grouped[age] = {};
-    if (!grouped[age][teamId]) {
-      grouped[age][teamId] = {
-        name: teamName,
-        competition: competition,
-        games: []
-      };
-    }
-
-    grouped[age][teamId].games.push(game);
-
-  });
-
-  renderAgeTabs();
-});
-
-function renderAgeTabs(){
-
-  ageTabs.innerHTML = "";
-
-  const ages = Object.keys(grouped).sort(
-    (a,b) => ageOrder.indexOf(a) - ageOrder.indexOf(b)
-  );
-
-  ages.forEach((age, index) => {
-
-    const btn = document.createElement("button");
-    btn.textContent = age;
-
-    btn.onclick = () => renderTeams(age);
-
-    ageTabs?.appendChild(btn);
-
-    if(index === 0) renderTeams(age);
-
-  });
-
-}
-
-function renderTeams(age){
-
-  teamsContainer.innerHTML = "";
-  gamesContainer.innerHTML = "";
-
-  const teams = Object.values(grouped[age]);
-
-  teams.sort((a,b) => 
-    competitionOrder.indexOf(a?.competition) - 
-    competitionOrder.indexOf(b?.competition)
-  );
-
-  teams.forEach(team => {
-
-    const btn = document.createElement("button");
-
-    btn.textContent = `${team?.name} (${team?.competition})`;
-
-    btn.onclick = () => renderGames(team.games);
-
-    teamsContainer.appendChild(btn);
-
-  });
-
-}
-
-function renderGames(games){
-
-  gamesContainer.innerHTML = "";
-
-  games.forEach(game => {
-
-    const div = document.createElement("div");
-
-    const date = new Date(game.ts_game_start * 1000);
-
-    div.innerHTML = `
-      <strong>${game.name}</strong><br>
-      Fecha: ${date.toLocaleString()}<br>
-      ID partido: ${game.id}
-      <hr>
-    `;
-
-    gamesContainer?.appendChild(div);
-
-  });
-
-}
-</script>
+<script type="module" src="/src/scripts/main.ts"></script>
