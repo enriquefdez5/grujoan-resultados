@@ -5,6 +5,7 @@ import TeamsList from "../components/TeamsList.astro";
 import GamesList from "../components/GamesList.astro";
 
 import "../styles/global.css";
+import mainScript from "../scripts/main.ts?url";
 
 ---
 <div class="min-h-screen bg-gray-50 py-10">
@@ -35,6 +36,4 @@ import "../styles/global.css";
   </div>
 </div>  
 
-<script type="module">
-  import "../../src/scripts/main.ts";
-</script>
+<script type="module" src={mainScript}></script>
