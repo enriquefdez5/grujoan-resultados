@@ -4,17 +4,35 @@ import AgeTabs from "../components/AgeTabs.astro";
 import TeamsList from "../components/TeamsList.astro";
 import GamesList from "../components/GamesList.astro";
 
+import "../styles/global.css";
 
 ---
+<div class="min-h-screen bg-gray-50 py-10">
 
-<h1>Partidos del club</h1>
+  <div class="max-w-3xl mx-auto px-4 space-y-8">
 
-<ClubSelector />
+    <h1 class="text-3xl font-bold text-center text-gray-800">
+      Partidos del club
+    </h1>
 
-<hr>
+    <ClubSelector />
 
-<AgeTabs />
-<TeamsList />
-<GamesList />
+    <hr>
+
+    <div id="loading" class="hidden flex justify-center py-8">
+        <div class="flex items-center gap-3 text-gray-600">
+            
+            <div class="w-6 h-6 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+            
+            <span class="text-sm font-medium">Cargando partidos...</span>
+        
+        </div>
+    </div>
+
+    <AgeTabs />
+    <TeamsList />
+    <GamesList />
+  </div>
+</div>  
 
 <script type="module" src="/src/scripts/main.ts"></script>
