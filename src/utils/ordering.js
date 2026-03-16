@@ -3,7 +3,9 @@ export const ageOrder = [
   "juvenil",
   "cadete",
   "infantil",
-  "alevín"
+  "alevín",
+  "benjamín",
+  "prebenjamín"
 ];
 
 export const competitionOrder = [
@@ -22,7 +24,15 @@ export const competitionOrder = [
 
   "1ª ALEVIN",
   "2ª ALEVIN",
-  "3ª ALEVIN"
+  "3ª ALEVIN",
+
+  "1ª BENJAMÍN",
+  "2ª BENJAMÍN",
+  "3ª BENJAMÍN",
+  
+  "1ª PREBENJAMÍN",
+  "2ª PREBENJAMÍN",
+  "3ª PREBENJAMÍN"
 ];
 
 export function sortAges(ages){
