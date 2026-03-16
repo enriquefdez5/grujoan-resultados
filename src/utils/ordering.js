@@ -26,13 +26,13 @@ export const competitionOrder = [
   "2ª ALEVIN",
   "3ª ALEVIN",
 
-  "1ª BENJAMÍN",
-  "2ª BENJAMÍN",
-  "3ª BENJAMÍN",
+  "1ª BENJAMIN",
+  "2ª BENJAMIN",
+  "3ª BENJAMIN",
   
-  "1ª PREBENJAMÍN",
-  "2ª PREBENJAMÍN",
-  "3ª PREBENJAMÍN"
+  "1ª PREBENJAMIN",
+  "2ª PREBENJAMIN",
+  "3ª PREBENJAMIN"
 ];
 
 export function sortAges(ages){
