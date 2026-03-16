@@ -1,12 +1,12 @@
 ---
 const clubs = [
-  { name: "GRujoan", code: 175 },
+  { name: "Grujoan", code: 175 },
   { name: "Centro Asturiano", code: 180 },
   { name: "Covadonga", code: 190 }
 ];
 ---
 
-<select id="clubSelect">
+<select id="clubSelect" class="border rounded p-2 w-full">
   <option value="">Selecciona club</option>
 
   {clubs.map(club => (
@@ -15,4 +15,4 @@ const clubs = [
 
 </select>
 
-<button id="buscarBtn">Buscar</button>
+<button id="buscarBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Buscar</button>
