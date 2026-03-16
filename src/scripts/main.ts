@@ -129,7 +129,7 @@ function renderGames(games: any[]) {
   gamesContainer.className = "grid gap-4";
 
   games
-    .sort((a, b) => a.ts_game_start - b.ts_game_start)
+    .sort((a, b) => b.ts_game_start - a.ts_game_start)
     .forEach((game) => {
 
       const date = new Date(game.ts_game_start * 1000);
